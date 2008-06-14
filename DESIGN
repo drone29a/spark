@@ -1,0 +1,44 @@
+let's use this file for keeping track of design ideas for sparklemotion.
+the file is formatted for emacs' outline-mode (http://www.emacswiki.org/cgi-bin/wiki/OutlineMode)       
+__
+
+* Data input
+Eventually support multiple streams?
+Single stream is fine for now.
+
+** Format
+Text
+
+** Entity
+Data is grouped by entity.  I.e., three FoB sensors attached to shoulder, elbow,
+and wrist would be grouped and represent an arm entity.
+
+** Timing
+Not worrying about this for now, will investigate how to fix the FPS in Panda3d
+and then assume input is sync'd.
+
+** Coordinates
+*** FoB
+With FoB data, the position of the sensors from FoB space to SM (Sparkle Motion)
+space is a translation.  Euler angles of sensors needs to be worked out.
+
+* Visualization modes
+As data from multiple sensors is to
+
+** Points
+Simple 3d points, rendered as spheres.  Defined by: XYZ postion, RGBA color, and
+real number scale
+
+** Connected segments
+An ordered collection of connected points, rendered as line segments.  Defined
+by: [XYZ position], RGBA color, and real number scale
+
+** Textures
+Hmm, could be code that produces a texture based on some parameters
+
+* Camera control
+The camera will be fixed on a centroid that can be moved.  Left and right arrow
+keys rotate the camera around the centroid, which is aligned with the Y-axis.
+Up and down arrow keys translate the camera towards or away the centroid.  The
+'W' and 'S' keys move the centroid along the Y-axis, 'E' and 'D' along the
+X-axis, and 'R' and 'F' along the Z-axis.

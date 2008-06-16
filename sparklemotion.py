@@ -7,28 +7,7 @@ from direct.showbase.DirectObject import DirectObject
 from direct.task import Task
 import sys, logging
 from cameracontrol import CameraHandler
-
-class FobPointUpdateTask(object):
-    def __init__(self, filePath):
-        self.filePath = filePath
-        self.f = open(filePath, 'r')
-
-    def __lines(self, num):
-        result = []
-        for i in range(num):
-            result.append(self.f.readline())
-        return result
-
-    def __call__(self, points, task):
-        newPositions = [[float(val) for val in line.split()[1:4]] for line in self.__lines(3)]
-        if len(newPositions[0]) is 0:
-            self.f.close()
-            return Task.done
-        
-        for i in range(3):
-            points[i].setPos(*newPositions[i])
-            
-        return Task.cont
+from fob import FobPointUpdateTask
 
 class World(DirectObject):
     def __init__(self):
@@ -50,23 +29,11 @@ class World(DirectObject):
         for sensorNode in self.sensorNodes:
             sensorNode.reparentTo(render)
 
-        def trackShoulder(shoulderNode, task):
-            base.camera.lookAt(shoulderNode)
-            return Task.cont
-
-#        taskMgr.add(trackShoulder, 'TrackShoulder', extraArgs=[self.sensorNodes[0]], appendTask=True)
-        taskMgr.add(FobPointUpdateTask('/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09/001.dat'), 
-                    'FobPointUpdate', extraArgs=[self.sensorNodes], appendTask=True)
-
-        self.testNode = loader.loadModelCopy("models/planet_sphere")
-        self.testNode.reparentTo(render)
-        self.testHandler = CameraHandler(self.testNode, self.sensorNodes[0].getPos(), Vec3(-90,0,90))
-        base.camera.setPos(400,0,0)
-        base.camera.lookAt(self.sensorNodes[0])
-        base.camera.setR(90)
+        taskMgr.add(FobPointUpdateTask('/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09/001.dat', 
+                                       self.sensorNodes), 
+                    'FobPointUpdate')
         
-#        self.mainView = CameraHandler(base.camera, self.sensorNodes[0].getPos(), Vec3(0,90,0))
-#        base.camera.lookAt(self.sensorNodes[0])
+        self.mainView = CameraHandler(base.camera, Vec3(40.576,-1.103,-4.825), Vec3(0,0,0))
             
         
 w = World()

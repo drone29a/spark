@@ -54,13 +54,12 @@ class CameraHandler(DirectObject):
             self.focalPoint.setH(self.focalPoint, -5)
 
         self.camera.lookAt(self.focalPoint)
-        self.camera.setHpr(self.focalPoint.getHpr())
 
     def zoom(self, direction):
         """
         Zoom in and out by translating camera towards/away focal point.
         """
         if direction is CameraHandler.DIRECTION.UP:
-            self.camera.setZ(self.camera, 10)
+            self.camera.setY(self.camera, 10)
         elif direction is CameraHandler.DIRECTION.DOWN:
-            self.camera.setZ(self.camera, -10)
+            self.camera.setY(self.camera, -10)

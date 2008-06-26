@@ -5,9 +5,10 @@ from direct.gui.OnscreenText import OnscreenText
 from direct.showbase import DirectObject
 from direct.showbase.DirectObject import DirectObject
 from direct.task import Task
+from direct.actor.Actor import Actor
 import sys, logging
 from cameracontrol import CameraHandler
-from fob import FobPointUpdateTask
+from tasks import FobPointUpdateTask
 
 class World(DirectObject):
     def __init__(self):
@@ -24,6 +25,10 @@ class World(DirectObject):
         base.textureOff()
         base.setFrameRateMeter(True)
 
+        self.tinman = Actor()
+        self.tinman.loadModel("models/tinman")
+        self.tinman.reparentTo(render)
+
         self.sensorNodes = [loader.loadModelCopy("models/planet_sphere") for i in range(3)]
         
         for sensorNode in self.sensorNodes:
@@ -32,6 +37,16 @@ class World(DirectObject):
         taskMgr.add(FobPointUpdateTask('/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09/001.dat', 
                                        self.sensorNodes), 
                     'FobPointUpdate')
+
+        class MoveBoneTask(object):
+            def __init__(self, actor):
+                self.actor = actor
+                self.leftForearm = self.actor.controlJoint(None, "modelRoot", "L_forearmBone")
+
+            def __call__(self, task):
+                self.leftForearm.setHpr(20, 40, 30)
+
+        taskMgr.add(MoveBoneTask(self.tinman), 'MoveBone')
         
         self.mainView = CameraHandler(base.camera, Vec3(40.576,-1.103,-4.825), Vec3(0,0,0))
             

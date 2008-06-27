@@ -64,7 +64,7 @@ def writer(data):
 
     for i in xrange(numMoments):
         for j in xrange(numSensors):
-            yield "%s %s %s %s\n" % tuple([i+1] + data[j,i].tolist())
+            yield "%s %s %s %s\n" % tuple([j+1] + data[j,i].tolist())
 
 def writeData(outfile, data):
     out = open(outfile, 'w')

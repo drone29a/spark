@@ -34,7 +34,7 @@ class World(DirectObject):
         for sensorNode in self.sensorNodes:
             sensorNode.reparentTo(render)
 
-        taskMgr.add(FobPointUpdateTask('/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09/001.dat', 
+        taskMgr.add(FobPointUpdateTask('/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09-smooth/001.dat', 
                                        self.sensorNodes), 
                     'FobPointUpdate')
 

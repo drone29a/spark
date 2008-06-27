@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(__file__))
 from optparse import OptionParser
 from fob import FobStream
 from numpy import array, c_
-from utils import smooth, formatData, readData, writer, writeData
+from utils import smooth, formatData, readData, writeData
 
 def main(argv=None):
     if argv == None:

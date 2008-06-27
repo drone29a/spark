@@ -1,16 +1,17 @@
-import sys
-sys.path.append("..")
+import sys, os
+sys.path.append(os.path.dirname(__file__))
 
 from optparse import OptionParser
 from fob import FobStream
 from numpy import array, c_
+import utils
 
 def buildCols():
     """Build columns of signal data in the following format:
     [ x<sensor-id> y<sensor-id> z<sensor-id> x<sensor-id2> ... ]
     """
     
-def parseData(infile, numSensors):
+def readData(infile, numSensors):
     """Parse out the x, y, z signals for each sensor.
 
     Returns a list of signal tuples, grouped by sensor.
@@ -54,6 +55,20 @@ def formatData(parsedData):
 
     return c_[[__formatData(sensorData) for sensorData in parsedData]]
 
+def writer(data):
+    numSensors = data.ndim
+    numMoments = data[0,:,0].size
+
+    for i in xrange(numMoments):
+        for j in xrange(numSensors):
+            yield "%s %s %s %s\n" % tuple([i+1] + data[j,i].tolist())
+
+def writeData(outfile, data):
+    out = open(outfile, 'w')
+    out.writelines(writer(data))
+
+    out.close()
+
 def main(argv=None):
     if argv == None:
         argv = sys.argv
@@ -66,11 +81,18 @@ def main(argv=None):
     numSensors = int(numSensors)
 
     # Read in sensor data
-    sensorData = parseData(infile, numSensors)
+    sensorData = readData(infile, numSensors)
 
     # Get it into a nice linear algebra form
     data = formatData(sensorData)
 
+    # Smooth 'em all
+    for sensorData in data:
+        for vec in sensorData.T:
+            vec[:] = utils.smooth(vec)
+
+    # Write it out in the standard FoB format
+    writeData(outfile, data)
 
 if __name__ == "__main__":
     sys.exit(main())

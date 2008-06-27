@@ -17,6 +17,7 @@ class FobStream(object):
     def next(self):
         lines = self.__lines(self.numSensors)
         if len(lines[0]) == 0:
+            self.f.close()
             raise StopIteration
         return lines
 

@@ -32,6 +32,8 @@ data_dir = os.path.join(data_dir, "fob")
 data_dir = os.path.join(data_dir, "2008_06_09")		
 # store the data filename
 data_file = ""		
+#        dataFile = '/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09-smooth/001.dat'
+#        dataFile = '/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09-interp30/001.dat'
 
 #
 # resource variables (provided for ease)

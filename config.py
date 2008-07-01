@@ -45,26 +45,3 @@ prog_path = __fldr_name__					# folder where framework scripts reside
 NUMARGS_ERROR = 1
 TYPEARGS_ERROR = 2
 DATA_ERROR = 3
-
-#
-# control values to override defaults
-#
-
-def set_globals(zdata_dir = ""):
-	global data_dir
-	
-	# set the appropriate global variables
-	if not zdata_dir == "":
-		data_dir = zdata_dir
-
-#
-# set the data file location
-#
-
-def set_data_file(zdata_file = ""):
-	global data_dir, data_file
-
-	# join the paths in an appropriate way
-	if not zdata_file == "":
-		data_file = os.path.abspath(os.path.join(data_dir, zdata_file))	
-	

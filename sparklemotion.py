@@ -9,6 +9,7 @@ from direct.actor.Actor import Actor
 import sys, logging
 from cameracontrol import CameraHandler
 from tasks import FobPointUpdateTask
+import config
 
 class World(DirectObject):
     def __init__(self):
@@ -34,9 +35,7 @@ class World(DirectObject):
         for sensorNode in self.sensorNodes:
             sensorNode.reparentTo(render)
 
-#        dataFile = '/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09-smooth/001.dat'
-        dataFile = '/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09-interp30/001.dat'
-        taskMgr.add(FobPointUpdateTask(dataFile, 
+        taskMgr.add(FobPointUpdateTask(config.data_file, 
                                        self.sensorNodes), 
                     'FobPointUpdate')
 
@@ -52,6 +51,10 @@ class World(DirectObject):
         
         self.mainView = CameraHandler(base.camera, Vec3(40.576,-1.103,-4.825), Vec3(0,0,0))
             
-        
-w = World()
-run()
+
+def launch():        
+    w = World()
+    run()
+
+if __name__ == "__main__":
+    launch()

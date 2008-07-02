@@ -1,11 +1,10 @@
 import sys, os
-sys.path.append(os.path.dirname(__file__))
-
 from optparse import OptionParser
-from fob import FobStream
+from sparklemotion.fob import FobStream
 from numpy import array, c_, arange, zeros
 from scipy.interpolate.interpolate import interp1d
-from utils import formatData, readData, writeData
+from sparklemotion.utils import readData, writeData
+from sparklemotion.tools.utils import formatData
 
 def main(argv=None):
     if argv == None:

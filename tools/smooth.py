@@ -1,10 +1,9 @@
 import sys, os
-sys.path.append(os.path.dirname(__file__))
-
 from optparse import OptionParser
-from fob import FobStream
+from sparklemotion.fob import FobStream
 from numpy import array, c_
-from utils import smooth, formatData, readData, writeData
+import sparklemotion.utils as utils
+import sparklemotion.tools.utils as tools_utils
 
 def main(argv=None):
     if argv == None:
@@ -18,18 +17,18 @@ def main(argv=None):
     numSensors = int(numSensors)
 
     # Read in sensor data
-    sensorData = readData(infile, numSensors)
+    sensorData = utils.readData(infile, numSensors)
 
     # Get it into a nice linear algebra form
-    data = formatData(sensorData)
+    data = tools_utils.formatData(sensorData)
 
     # Smooth 'em all
     for sensorData in data:
         for vec in sensorData.T:
-            vec[:] = smooth(vec)
+            vec[:] = tools_utils.smooth(vec)
 
     # Write it out in the standard FoB format
-    writeData(outfile, data)
+    utils.writeData(outfile, data)
 
 if __name__ == "__main__":
     sys.exit(main())

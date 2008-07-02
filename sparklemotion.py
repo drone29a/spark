@@ -1,15 +1,15 @@
+import sys, logging
+import config            
+from direct.gui.DirectGui import *
 import direct.directbase.DirectStart
 from pandac.PandaModules import TextNode, ClockObject, Vec3
-from direct.gui.DirectGui import *
 from direct.gui.OnscreenText import OnscreenText
 from direct.showbase import DirectObject
 from direct.showbase.DirectObject import DirectObject
 from direct.task import Task
 from direct.actor.Actor import Actor
-import sys, logging
 from cameracontrol import CameraHandler
-from tasks import FobPointUpdateTask
-import config
+from tasks import FobPointUpdateTask, FobJointUpdateTask
 
 class World(DirectObject):
     def __init__(self):
@@ -18,14 +18,14 @@ class World(DirectObject):
                                             align=TextNode.ALeft, scale=0.05)
 
         globalClock.setMode(ClockObject.MLimited)
-        globalClock.setFrameRate(86.1)
+        globalClock.setFrameRate(config.frame_rate)
 
         self.accept('escape', sys.exit)
         base.disableMouse()
         base.setBackgroundColor(0, 0, 0, 0)
         base.textureOff()
         base.setFrameRateMeter(True)
-
+        
         self.tinman = Actor()
         self.tinman.loadModel("models/tinman")
         self.tinman.reparentTo(render)
@@ -35,22 +35,18 @@ class World(DirectObject):
         for sensorNode in self.sensorNodes:
             sensorNode.reparentTo(render)
 
-        taskMgr.add(FobPointUpdateTask(config.data_file, 
-                                       self.sensorNodes), 
-                    'FobPointUpdate')
+            taskMgr.add(FobPointUpdateTask(config.data_file, 
+                                           self.sensorNodes), 
+                        'FobPointUpdate')
+#            taskMgr.add(MoveBoneTask(self.tinman), 'MoveBone')
 
-        class MoveBoneTask(object):
-            def __init__(self, actor):
-                self.actor = actor
-                self.leftForearm = self.actor.controlJoint(None, "modelRoot", "L_forearmBone")
+            leftForearm = self.tinman.controlJoint(None, "modelRoot", "L_forearmBone")
+            leftArm = self.tinman.controlJoint(None, "modelRoot", "L_armBone")
 
-            def __call__(self, task):
-                self.leftForearm.setHpr(20, 40, 30)
+            taskMgr.add(FobJointUpdateTask(config.data_file, (leftArm, leftForearm)), 'FobJointUpdate')
 
-        taskMgr.add(MoveBoneTask(self.tinman), 'MoveBone')
-        
-        self.mainView = CameraHandler(base.camera, Vec3(40.576,-1.103,-4.825), Vec3(0,0,0))
-            
+            self.mainView = CameraHandler(base.camera, Vec3(40.576,-1.103,-4.825), Vec3(0,0,0))
+
 
 def launch():        
     w = World()

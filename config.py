@@ -40,6 +40,8 @@ data_file = ""
 #
 cwd = os.getcwd()						# working directory (from caller)
 prog_path = __fldr_name__					# folder where framework scripts reside
+num_sensors = 3  # number of FoB sensors used
+frame_rate = 30
 
 # error codes
 NUMARGS_ERROR = 1

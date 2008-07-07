@@ -43,16 +43,19 @@ class FobJointUpdateTask(object):
                 currSegmentVec.normalize()
                 segmentVec.normalize()
 
+                logging.debug("curr: %s, next: %s" % (currSegmentVec, segmentVec))
+
                 axis = currSegmentVec.cross(segmentVec)
                 axis.normalize()
                 
                 angle = currSegmentVec.angleRad(segmentVec)
-                logging.debug("axis: %s, angle: %s" % (axis, angle))
+
+                logging.debug("cross: %s, angle (rad): %s" % (axis, angle))
                 
                 quat = Quat()
                 quat.setFromAxisAngleRad(angle, axis)
 
-                joint.setQuat(quat)
+                joint.setQuat(joint, quat)
 
                 self.prevSegmentVecs.append(segmentVec)
             return Task.cont

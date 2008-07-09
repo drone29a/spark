@@ -32,32 +32,38 @@ class FobJointUpdateTask(object):
         self.joints = joints
         self.data = utils.readData(filePath, config.num_sensors)
         self.dataStream = izip(*self.data)
-        self.prevSegmentVecs = segmentsFromJoints(self.joints)
+        self.prevFobSegments = segmentsFromJoints(self.joints)
+        self.prevJointSegments = segmentsFromJoints(self.joints)
 
     def __call__(self, task):
         for moment in self.dataStream:
-            import logging
-            for currSegmentVec, segmentVec, joint, endJoint in zip(self.prevSegmentVecs, segmentsFromMoment(moment), self.joints[:-1], self.joints[1:]):
-                self.prevSegmentVecs.pop(0)
+            for prevSegment, segment, prevJointSegment, joint, endJoint in zip(self.prevFobSegments, 
+                                                                               segmentsFromMoment(moment), 
+                                                                               self.prevJointSegments, 
+                                                                               self.joints[:-1], 
+                                                                               self.joints[1:]):
+                self.prevFobSegments.pop(0)
 
-                currSegmentVec.normalize()
-                segmentVec.normalize()
+                prevJointSegment = Vec3(endJoint.getPos()) - Vec3(joint.getPos())
 
-                logging.debug("curr: %s, next: %s" % (currSegmentVec, segmentVec))
+                prevSegment.normalize()
+                segment.normalize()
+                prevJointSegment.normalize()
 
-                axis = currSegmentVec.cross(segmentVec)
+                axis = prevSegment.cross(segment)
                 axis.normalize()
                 
-                angle = currSegmentVec.angleRad(segmentVec)
+                angle = prevSegment.angleRad(segment)
 
-                logging.debug("cross: %s, angle (rad): %s" % (axis, angle))
-                
+                import logging
+                logging.debug("%s, %s, %s" % (axis, axis.length(), angle))
+
                 quat = Quat()
                 quat.setFromAxisAngleRad(angle, axis)
 
                 joint.setQuat(joint, quat)
 
-                self.prevSegmentVecs.append(segmentVec)
+                self.prevFobSegments.append(segment)
             return Task.cont
         return Task.done
 

@@ -37,14 +37,15 @@ class FobJointUpdateTask(object):
 
     def __call__(self, task):
         for moment in self.dataStream:
-            for prevSegment, segment, prevJointSegment, joint, endJoint in zip(self.prevFobSegments, 
-                                                                               segmentsFromMoment(moment), 
-                                                                               self.prevJointSegments, 
-                                                                               self.joints[:-1], 
-                                                                               self.joints[1:]):
+            for prevSegment, segment, joint in zip(self.prevFobSegments, 
+                                                             segmentsFromMoment(moment), 
+                                                             self.joints[:-1]):
                 self.prevFobSegments.pop(0)
 
-                prevJointSegment = Vec3(endJoint.getPos()) - Vec3(joint.getPos())
+                endJoint = joint.getChild(0)
+
+                prevJointSegment = Vec3(endJoint.getNetTransform().getPos()) - Vec3(joint.getNetTransform().getPos())
+                prevJointSegment.setZ(-prevJointSegment.getZ())
 
                 prevSegment.normalize()
                 segment.normalize()
@@ -52,11 +53,13 @@ class FobJointUpdateTask(object):
 
                 axis = prevSegment.cross(segment)
                 axis.normalize()
-                
-                angle = prevSegment.angleRad(segment)
 
                 import logging
-                logging.debug("%s, %s, %s" % (axis, axis.length(), angle))
+                logging.debug("moment: %s" % (moment,))
+                logging.debug("segment: %s, prevSegment: %s, prevJointSegment: %s" % (segment, prevSegment, prevJointSegment))
+                logging.debug("axis: %s" % (axis,))
+                
+                angle = prevSegment.angleRad(segment)
 
                 quat = Quat()
                 quat.setFromAxisAngleRad(angle, axis)

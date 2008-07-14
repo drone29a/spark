@@ -39,6 +39,16 @@ class World(DirectObject):
         leftArm = self.tinman.controlJoint(None, "modelRoot", "L_armBone")
         leftForearm = self.tinman.controlJoint(None, "modelRoot", "L_forearmBone")
         leftWrist = self.tinman.controlJoint(None, "modelRoot", "L_wristBone")
+        leftElbowNode = self.tinman.attachNewNode("Left Elbow")
+#        leftElbowNode = loader.loadModelCopy("models/planet_sphere")
+#        leftElbowNode.reparentTo(self.tinman)
+        leftWristNode = self.tinman.attachNewNode("Left Wrist")
+        leftElbowNode.setPos(self.tinman.find("*L_armBone").getPos())
+        leftWristNode.setPos(leftWrist.getPos())
+
+        leftElbowNode.wrtReparentTo(leftArm)
+        leftWristNode.wrtReparentTo(leftForearm)
+
         rightArm = self.tinman.controlJoint(None, "modelRoot", "R_armBone")
         rightForearm = self.tinman.controlJoint(None, "modelRoot", "R_forearmBone")
         rightWrist = self.tinman.controlJoint(None, "modelRoot", "R_wristBone")
@@ -47,10 +57,6 @@ class World(DirectObject):
         shoulderInitPos = Vec3(*fobData[0][0])
         rootInitPos = rootBone.getPos() + (leftArm.getPos() - shoulderInitPos)
         self.tinman.setPos(shoulderInitPos + leftArm.getPos() + Vec3(0,0,-16))
-#        self.tinman.setPos(shoulderInitPos - (self.tinman.getPos() - leftArm.getNetTransform().getPos()))
-        logging.debug(shoulderInitPos)
-        logging.debug(self.tinman.getPos())
-        logging.debug(leftArm.getNetTransform().getPos())
 
         self.sensorNodes = [loader.loadModelCopy("models/planet_sphere") for i in range(3)]
         

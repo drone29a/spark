@@ -35,28 +35,12 @@ class World(DirectObject):
         self.tinman.reparentTo(render)
         
         # Init tinman's position and pose
-        rootBone = self.tinman.controlJoint(None, "modelRoot", "RootBone")
-        leftArm = self.tinman.controlJoint(None, "modelRoot", "L_armBone")
-        leftForearm = self.tinman.controlJoint(None, "modelRoot", "L_forearmBone")
-        leftWrist = self.tinman.controlJoint(None, "modelRoot", "L_wristBone")
-        leftElbowNode = self.tinman.attachNewNode("Left Elbow")
-#        leftElbowNode = loader.loadModelCopy("models/planet_sphere")
-#        leftElbowNode.reparentTo(self.tinman)
-        leftWristNode = self.tinman.attachNewNode("Left Wrist")
-        leftElbowNode.setPos(self.tinman.find("*L_armBone").getPos())
-        leftWristNode.setPos(leftWrist.getPos())
-
-        leftElbowNode.wrtReparentTo(leftArm)
-        leftWristNode.wrtReparentTo(leftForearm)
-
-        rightArm = self.tinman.controlJoint(None, "modelRoot", "R_armBone")
-        rightForearm = self.tinman.controlJoint(None, "modelRoot", "R_forearmBone")
-        rightWrist = self.tinman.controlJoint(None, "modelRoot", "R_wristBone")
+        rootBone = self.tinman.exposeJoint(None, "modelRoot", "RootBone")
+        leftArm = self.tinman.exposeJoint(None, "modelRoot", "L_armBone")
             
         fobData = readData(config.data_file, config.num_sensors)
         shoulderInitPos = Vec3(*fobData[0][0])
-        rootInitPos = rootBone.getPos() + (leftArm.getPos() - shoulderInitPos)
-        self.tinman.setPos(shoulderInitPos + leftArm.getPos() + Vec3(0,0,-16))
+        self.tinman.setPos(shoulderInitPos - leftArm.getPos())
 
         self.sensorNodes = [loader.loadModelCopy("models/planet_sphere") for i in range(3)]
         
@@ -67,7 +51,7 @@ class World(DirectObject):
                                        self.sensorNodes), 
                     'FobPointUpdate')
  
-        taskMgr.add(FobJointUpdateTask(config.data_file, (leftArm, leftForearm, leftWrist)), 'FobJointUpdate')
+        taskMgr.add(FobJointUpdateTask(config.data_file, self.tinman, ("L_armBone", "L_forearmBone", "L_wristBone")), 'FobJointUpdate')
         
         self.mainView = CameraHandler(base.camera, Vec3(40.576,-1.103,-4.825), Vec3(0,0,0))
 

@@ -1,0 +1,3 @@
+gemini:sparklemotion mrevelle$ python tools/smooth.py data/fob/2008_06_09/003.dat 3 data/fob/2008_06_09-smooth/003.dat
+gemini:sparklemotion mrevelle$ python tools/interp.py data/fob/2008_06_09-smooth/003.dat 3 86.1 30 data/fob/2008_06_09-interp30/003.dat 
+gemini:sparklemotion mrevelle$ python tools/coords.py -n 1,2 data/fob/2008_06_09-interp30/003.dat 3 data/fob/2008_06_09-coord/003.dat

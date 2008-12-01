@@ -37,6 +37,8 @@ class FobJointUpdateTask(object):
         self.dataStream = izip(*self.data)
         self.prevFobSegments = segmentsFromJoints(self.exposedJoints[:-1], self.exposedJoints[1:])
         self.prevJointSegments = segmentsFromJoints(self.exposedJoints[:-1], self.exposedJoints[1:])
+        self.stopped = False
+        self.paused = False
 
     def __call__(self, task):
         for moment in self.dataStream:
@@ -45,6 +47,9 @@ class FobJointUpdateTask(object):
                                                                                    self.controlJoints[:-1],
                                                                                    self.joints[:-1],
                                                                                    self.joints[1:]):
+                while self.paused:
+                    return Task.cont
+
                 self.prevFobSegments.pop(0)
                 
                 exposedJoint = self.actor.exposeJoint(None, "modelRoot", jointName)
@@ -61,7 +66,7 @@ class FobJointUpdateTask(object):
                 import logging
 #                logging.debug("moment: %s" % (moment,))
 #                logging.debug("segment: %s, prevSegment: %s, prevJointSegment: %s" % (segment, prevSegment, prevJointSegment))
-                logging.debug("prevJointSegment: %s" % (prevJointSegment,))
+#                logging.debug("prevJointSegment: %s" % (prevJointSegment,))
 #                logging.debug("axis: %s" % (axis,))
                 
                 angle = prevSegment.angleRad(segment)
@@ -72,7 +77,10 @@ class FobJointUpdateTask(object):
                 controlJoint.setQuat(controlJoint, quat)
 
                 self.prevFobSegments.append(segment)
-            return Task.cont
+            if not self.stopped:
+                return Task.cont
+            else:
+                return Task.done
         return Task.done
 
 

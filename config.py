@@ -38,6 +38,11 @@ data_file = ""
 #
 # resource variables (provided for ease)
 #
+
+dataFiles = ("/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09-coord/001.dat",
+             "/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09-coord/002.dat",
+             "/Users/mrevelle/src/sparklemotion/data/fob/2008_06_09-coord/003.dat")
+
 cwd = os.getcwd()						# working directory (from caller)
 prog_path = __fldr_name__					# folder where framework scripts reside
 num_sensors = 3  # number of FoB sensors used
